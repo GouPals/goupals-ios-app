@@ -2,7 +2,7 @@ const express = require("express");
 const sequelize = require("../utils/database");
 const router = express.Router();
 
-const Item = require("../models/item")(sequelize);
+const Item = require("../models/itemModel")(sequelize);
 
 router.post("/", async (req, res) => {
   try {

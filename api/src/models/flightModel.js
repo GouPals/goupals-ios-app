@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  const Trip = sequelize.define("Trip", {
+  const Flight = sequelize.define("Flight", {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -27,15 +27,15 @@ module.exports = (sequelize) => {
       type: DataTypes.DATE,
       allowNull: false,
     },
-    travelerId: {
+    userId: {
       type: DataTypes.UUID,
       references: {
-        model: "travelers",
+        model: "users",
         key: "id",
       },
       allowNull: false,
     },
   });
 
-  return Trip;
+  return Flight;
 };

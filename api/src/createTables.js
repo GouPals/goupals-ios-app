@@ -1,14 +1,12 @@
 const sequelize = require("./utils/database");
 
-const createBuyerTable = require("./models/buyer");
-const createTravelerTable = require("./models/traveler");
-const createTripTable = require("./models/trip");
-const createItemTable = require("./models/item");
+const createUserTable = require("./models/userModel");
+const createFlightTable = require("./models/flightModel.js");
+const createItemTable = require("./models/itemModel");
 
 module.exports = () => {
-  createBuyerTable(sequelize);
-  createTravelerTable(sequelize);
-  createTripTable(sequelize);
+  createUserTable(sequelize);
+  createFlightTable(sequelize);
   createItemTable(sequelize);
 
   sequelize

@@ -1,10 +1,11 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  const Traveler = sequelize.define("Traveler", {
+  const User = sequelize.define("User", {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
       primaryKey: true,
     },
     name: {
@@ -23,23 +24,19 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    paymentInfo: {
-      type: DataTypes.JSON,
+    rating: {
+      type: DataTypes.DECIMAL(3, 1),
       allowNull: true,
+      validate: {
+        min: 0,
+        max: 5,
+      },
     },
     bio: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    rating: {
-      type: DataTypes.DECIMAL(3, 1), // e.g., 4.5
-      allowNull: true,
-      validate: {
-        min: 0.1,
-        max: 5.0,
-      },
-    },
   });
 
-  return Traveler;
+  return User;
 };
