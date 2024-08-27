@@ -6,7 +6,7 @@ const users = require("./routes/userRoutes");
 const items = require("./routes/itemRoutes");
 const flights = require("./routes/flightRoutes");
 
-createDatabaseTables();
+//createDatabaseTables();
 
 app.use(express.json());
 app.use("/api/users", users);

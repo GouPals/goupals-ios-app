@@ -1,3 +1,5 @@
+_ = require("lodash");
+const bcrypt = require("bcrypt");
 const express = require("express");
 const sequelize = require("../utils/database");
 const router = express.Router();
@@ -6,11 +8,21 @@ const User = require("../models/userModel")(sequelize);
 
 router.post("/", async (req, res) => {
   try {
-    const user = await User.create(req.body);
+    const user = new User(req.body);
+
+    // Encrypt password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+
+    await user.save();
+
+    const keysToReturn = Object.keys(user.dataValues).filter(
+      (key) => key !== "password"
+    );
 
     res.status(201).json({
       message: "User created successfully",
-      data: user.dataValues,
+      data: _.pick(user.dataValues, keysToReturn),
     });
   } catch (error) {
     res.status(400).send(error);
