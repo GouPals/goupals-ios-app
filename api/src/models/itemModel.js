@@ -1,7 +1,10 @@
-const { DataTypes } = require("sequelize");
+const { Model, DataTypes } = require("sequelize");
+const sequelize = require("../utils/database");
 
-module.exports = (sequelize) => {
-  const Item = sequelize.define("Item", {
+class Item extends Model {}
+
+Item.init(
+  {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4, // Automatically generates a UUID
@@ -47,7 +50,11 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-  });
+  },
+  {
+    sequelize,
+    modelName: "Item",
+  }
+);
 
-  return Item;
-};
+module.exports = Item;

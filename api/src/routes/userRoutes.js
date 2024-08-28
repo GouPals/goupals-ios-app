@@ -1,10 +1,8 @@
 _ = require("lodash");
 const bcrypt = require("bcrypt");
-const express = require("express");
-const sequelize = require("../utils/database");
-const router = express.Router();
+const router = require("express").Router();
 
-const User = require("../models/userModel")(sequelize);
+const User = require("../models/userModel");
 
 router.post("/", async (req, res) => {
   try {

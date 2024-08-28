@@ -1,7 +1,19 @@
-const { DataTypes } = require("sequelize");
+const { Model, DataTypes } = require("sequelize");
+const sequelize = require("../utils/database");
+const jwt = require("jsonwebtoken");
+const config = require("config");
 
-module.exports = (sequelize) => {
-  const User = sequelize.define("User", {
+class User extends Model {
+  generateAuthToken() {
+    return jwt.sign(
+      { id: this.id, isAdmin: this.isAdmin },
+      config.get("jwtPrivateKey")
+    );
+  }
+}
+
+User.init(
+  {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -40,7 +52,15 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-  });
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+  },
+  {
+    sequelize,
+    modelName: "User",
+  }
+);
 
-  return User;
-};
+module.exports = User;

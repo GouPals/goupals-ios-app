@@ -1,13 +1,13 @@
-const sequelize = require("./utils/database");
+const sequelize = require("./utils/database.js");
 
-const createUserTable = require("./models/userModel");
-const createFlightTable = require("./models/flightModel.js");
-const createItemTable = require("./models/itemModel");
+const User = require("./models/userModel");
+const Flight = require("./models/flightModel");
+const Item = require("./models/itemModel");
 
 module.exports = () => {
-  createUserTable(sequelize);
-  createFlightTable(sequelize);
-  createItemTable(sequelize);
+  new User();
+  new Flight();
+  new Item();
 
   sequelize
     .sync()

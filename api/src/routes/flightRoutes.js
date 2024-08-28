@@ -1,12 +1,12 @@
-const express = require("express");
-const sequelize = require("../utils/database");
-const router = express.Router();
+const router = require("express").Router();
 
-const Flight = require("../models/flightModel")(sequelize);
+const Flight = require("../models/flightModel");
 
 router.post("/", async (req, res) => {
   try {
-    const flight = await Flight.create(req.body);
+    const flight = new Flight(req.body);
+
+    await flight.save();
 
     res.status(201).json({
       message: "Flight created successfully",
