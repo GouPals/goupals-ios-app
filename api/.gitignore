@@ -4,3 +4,6 @@
 # Ignore node_modules and config files
 node_modules/
 config/
+
+# Ignore logs
+*.log

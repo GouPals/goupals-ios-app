@@ -2,46 +2,34 @@ const router = require("express").Router();
 
 const Flight = require("../models/flightModel");
 
-router.post("/", async (req, res) => {
-  try {
-    const flight = new Flight(req.body);
+router.get("/:id", async (req, res) => {
+  const flight = await Flight.findByPk(req.params.id);
 
-    await flight.save();
-
-    res.status(201).json({
-      message: "Flight created successfully",
-      data: flight.dataValues,
-    });
-  } catch (error) {
-    res.status(400).send(error);
-  }
+  if (flight) res.status(200).json(flight);
+  else res.status(404).json({ error: "Flight not found" });
 });
 
-router.get("/:id", async (req, res) => {
-  try {
-    const flight = await Flight.findByPk(req.params.id);
+router.post("/", async (req, res) => {
+  const flight = new Flight(req.body);
 
-    if (flight) res.status(200).json(flight);
-    else res.status(404).json({ error: "Flight not found" });
-  } catch (error) {
-    res.status(400).send(error);
-  }
+  await flight.save();
+
+  res.status(201).json({
+    message: "Flight created successfully",
+    data: flight.dataValues,
+  });
 });
 
 router.delete("/:id", async (req, res) => {
-  try {
-    const flight = await Flight.findByPk(req.params.id);
+  const flight = await Flight.findByPk(req.params.id);
 
-    if (flight) {
-      await flight.destroy();
-      res.status(200).json({
-        message: "Flight deleted successfully",
-        flight: flight,
-      });
-    } else res.status(404).json({ error: "Flight not found" });
-  } catch (error) {
-    res.status(400).send(error);
-  }
+  if (flight) {
+    await flight.destroy();
+    res.status(200).json({
+      message: "Flight deleted successfully",
+      flight: flight,
+    });
+  } else res.status(404).json({ error: "Flight not found" });
 });
 
 module.exports = router;
