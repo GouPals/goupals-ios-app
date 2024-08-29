@@ -2,7 +2,7 @@
 
 ## Technologies used
 - **frontend**: Swift
-- **backend**: Javascript for as the programming language, Node.js as the runtime environment and Express.js as framework
+- **backend**: Javascript as the programming language, Node.js as the runtime environment and Express.js as framework
 
 ## Running the application
 
