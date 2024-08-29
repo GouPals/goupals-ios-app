@@ -58,6 +58,9 @@ Authorization is based on JWT tokens. The token is sent back to the client when 
 - **jsonwebtoken**: Used for authentication. We use web tokens to check client permission when requests are sent to the server.
 - **bcrypt**: Used for hashing password in the database.
 - **Jest**: Used for unit tests.
+- **dotenv**: Used for reading environment variables from the .env file.
+- **mysql2**: Used to interact with mysql databases.
+- **sequelize**: It is an ORM (Object-Relational Mapping) used for mapping instance objects to instance tables in the database.
 ### Configuration
 
 All configurations are present in the config package. That's where JSON Token private keys are written, information regarding the connection to the database, and much more. There are different configurations JSON files. One of those files will be used depending on which environment the software is running in. For example, if the application is running in production (environment variable NODE_ENV set to "production"), then the development.json file will be used. default.json file is used for default configuration if no environment has been set.
