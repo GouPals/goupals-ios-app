@@ -1,8 +1,14 @@
 import SwiftUI
+import Firebase
 
 struct ContentView: View {
     @State private var isLoggedIn = false
     @ObservedObject var appModeManager = AppModeManager()
+    
+    init(){
+        FirebaseApp.configure()
+    }
+
 
     var body: some View {
         if isLoggedIn {

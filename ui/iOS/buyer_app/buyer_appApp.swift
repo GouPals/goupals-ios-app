@@ -8,12 +8,14 @@
 
 import SwiftUI
 import Combine
+import FirebaseCore
+import Firebase
+import FirebaseAuth
+import FirebaseStorage
 
 class AppModeManager: ObservableObject {
     @Published var isTravelerApp: Bool = false
 }
-
-
 
 class LanguageSettings: ObservableObject {
     @Published var language: String = "English" // Default language
@@ -25,6 +27,15 @@ class LanguageSettings: ObservableObject {
     }
 }
 
+
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    FirebaseApp.configure()
+    return true
+  }
+}
 
 
 @main

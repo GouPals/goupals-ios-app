@@ -5,27 +5,48 @@
 ////  Created by Jerry Cheng on 8/25/24.
 ////
 //
-
-
 import SwiftUI
+import Firebase
+import FirebaseAuth
+import FirebaseStorage
+import FirebaseCore
+
+//class FirebaseManager: NSObject {
+//    let auth: Auth
+//    
+//    static let shared = FirebaseManager()
+//    
+//    override init(){
+//        FirebaseApp.configure()
+//        
+//        self.auth = Auth.auth()
+//        
+//        super.init()
+//    }
+//}
+
 
 struct LoginView: View {
     @Binding var isLoggedIn: Bool
+    @State var email = ""
+    @State var password = ""
     @State private var showSignUp = false
-
+    
     var body: some View {
         VStack {
-            Text("Welcome to the App")
+            Text("Welcome to GouPals")
                 .font(.largeTitle)
                 .padding(.bottom, 40)
 
-            TextField("Username", text: .constant(""))
+            TextField("Username", text: $email)
                 .padding()
                 .background(Color(.systemGray6))
                 .cornerRadius(5)
                 .padding(.horizontal, 40)
+                .keyboardType(.emailAddress)
+                .autocapitalization(.none)
 
-            SecureField("Password", text: .constant(""))
+            SecureField("Password", text: $password)
                 .padding()
                 .background(Color(.systemGray6))
                 .cornerRadius(5)
@@ -33,7 +54,11 @@ struct LoginView: View {
 
             Button(action: {
                 // Handle login logic here
-                isLoggedIn = true
+                loginAccount()
+                
+                // change the log in global variable to true
+                
+                
             }) {
                 Text("Login")
                     .font(.headline)
@@ -57,73 +82,29 @@ struct LoginView: View {
             .sheet(isPresented: $showSignUp) {
                 SignUpView()
             }
+            
+            Text(self.loginStatusMessage)
+                .foregroundColor(.red)
         }
     }
+    
+    @State var loginStatusMessage = ""
+    
+    private func loginAccount(){
+        print("You have successfully logged in! ")
+        Auth.auth().signIn(withEmail: email, password: password){
+            result, err in
+            if let err = err {
+                print("Failed to create a user ", err)
+                self.loginStatusMessage = "Failed to log in to the account \(err)"
+                return
+            }
+            
+            print("Successfully created the user! \(result?.user.uid ?? "")")
+            self.loginStatusMessage = "Successfully logged in to user! \(result?.user.uid ?? "")"
+            isLoggedIn = true
+        }
+        
+        
+    }
 }
-
-
-//import SwiftUI
-//
-//struct LoginView: View {
-//    @State private var email = ""
-//        @State private var password = ""
-//        @State private var registered = true
-//        
-//    var body: some View {
-//        VStack(spacing: 20) {
-//            
-//            // Logo
-//            Spacer()
-//            Image(systemName: "globe")
-//                .resizable()
-//                .frame(width: 100, height: 100)
-//                .padding(.bottom, 50)
-//            
-//            Text("GouPals")
-//                .font(.title)
-//                .bold()
-//            
-//            Spacer()
-//            
-//            if registered { // if the user has an acccount with us:
-//                
-//                // Email & Password fields for Sign Up
-//                TextField("Email", text: $email)
-//                    .textFieldStyle(RoundedBorderTextFieldStyle())
-//                    .padding(.horizontal)
-//                
-//                SecureField("Password", text: $password)
-//                    .textFieldStyle(RoundedBorderTextFieldStyle())
-//                    .padding(.horizontal)
-//                
-//            } else { // if the user does not have an account with us:
-//                
-//                TextField("Email", text: $email)
-//                    .textFieldStyle(RoundedBorderTextFieldStyle())
-//                    .padding(.horizontal)
-//                
-//                SecureField("Password", text: $password)
-//                    .textFieldStyle(RoundedBorderTextFieldStyle())
-//                    .padding(.horizontal)
-//                
-//  
-//            }
-//            
-//            Spacer()
-//            
-//            Button(action: {
-//                registered.toggle()
-//            }) {
-//                Text(registered ? "Already have an account? Sign in!" : "Don’t have an account? Sign up!")
-//                    .font(.headline)
-//            }
-//            .padding(.bottom, 20)
-//        }
-//    }
-//
-//                
-//}
-//
-//#Preview {
-//    LoginView()
-//}
