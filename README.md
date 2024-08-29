@@ -60,6 +60,7 @@ Authorization is based on JWT tokens. The token is sent back to the client when 
 - **dotenv**: Used for reading environment variables from the .env file.
 - **mysql2**: Used to interact with mysql databases.
 - **sequelize**: It is an ORM (Object-Relational Mapping) used for mapping instance objects to instance tables in the database.
+- **joi**: used for data validation, especially for user data (make sure that password respect the configured rules...)
 
 Libraries only used in development:
 - **Jest**: Used for unit tests.
