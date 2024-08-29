@@ -40,15 +40,18 @@ The entry point of the application is the **app.js** class. All startup files wi
 - **logging**: This file ensures to log the error message into .log files to keep track of server exceptions. For logging, we use the **winston** library. There are two types of logging files. **logfile.log** is used to store errors raised by express when treating request whereas **uncaughtExceptions.log** is used for uncaught errors that occurred outside of request treatments.
 - **routes**: This file is responsible for redirecting requests to the different APIs.
 
-#### Authentication
+#### Authentication and Authorization
 
-Talk about salt and jwt
+For now, authentication is performed based on the user's email and password. These pieces of information are saved in the user table for the moment. For authentication security, we encrypt users' passwords using the **bcrypt** and we also use salt to add more security.
+Authorization is based on JWT tokens. The token is sent back to the client when he logs in. More precisely, we set a header field called **x-auth-token** in the HTTP response.
 
 #### Most important libraries used
 
 - **config**: Used for configuration. It allows us to access specific variables based on the environment we are in. For example, if we are in the development environment, the config library will automatically pick database variables defined in the development.json config file.
 - **winston**: Used for logging exceptions.
 - **express-async-errors**: Used to handle errors. By using this library, we don't need to create try/catch blocks when treating requests. The library will automatically create those try-catch blocks and raise an error based on the middleware error function defined in the middleware package.
+- **jsonwebtoken**: Used for authentication. We use web tokens to check client permission when requests are sent to the server.
+- **bcrypt**: Used for hashing password in the database.
 ### Configuration
 
 All configuration is present in the config package. That's where JSON Token private keys are written, information regarding the connection to the database, and much more. There are different configurations JSON files. One of those files will be used depending on which environment the software is running in. For example, if the application is running in production (environment variable NODE_ENV set to "development", then the development.json file will be used). default.json file is used for default configuration if no environment has been set.
