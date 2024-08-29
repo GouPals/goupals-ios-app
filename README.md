@@ -43,6 +43,12 @@ The entry point of the application is the **app.js** class. All startup files wi
 #### Authentication
 
 Talk about salt and jwt
+
+#### Most important libraries used
+
+- **config**: Used for configuration. It allows us to access specific variables based on the environment we are in. For example, if we are in the development environment, the config library will automatically pick database variables defined in the development.json config file.
+- **winston**: Used for logging exceptions.
+- **express-async-errors**: Used to handle errors. By using this library, we don't need to create try/catch blocks when treating requests. The library will automatically create those try-catch blocks and raise an error based on the middleware error function defined in the middleware package.
 ### Configuration
 
 All configuration is present in the config package. That's where JSON Token private keys are written, information regarding the connection to the database, and much more. There are different configurations JSON files. One of those files will be used depending on which environment the software is running in. For example, if the application is running in production (environment variable NODE_ENV set to "development", then the development.json file will be used). default.json file is used for default configuration if no environment has been set.
