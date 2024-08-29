@@ -54,5 +54,5 @@ Authorization is based on JWT tokens. The token is sent back to the client when 
 - **bcrypt**: Used for hashing password in the database.
 ### Configuration
 
-All configuration is present in the config package. That's where JSON Token private keys are written, information regarding the connection to the database, and much more. There are different configurations JSON files. One of those files will be used depending on which environment the software is running in. For example, if the application is running in production (environment variable NODE_ENV set to "production"), then the development.json file will be used. default.json file is used for default configuration if no environment has been set.
+All configurations are present in the config package. That's where JSON Token private keys are written, information regarding the connection to the database, and much more. There are different configurations JSON files. One of those files will be used depending on which environment the software is running in. For example, if the application is running in production (environment variable NODE_ENV set to "production"), then the development.json file will be used. default.json file is used for default configuration if no environment has been set.
 
