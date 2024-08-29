@@ -37,7 +37,7 @@ The entry point of the application is the **app.js** class. All startup files wi
 
 - **config.js**: This file is used for setting configuration. For now, it only ensures that a JWT private key has been set.
 - **database.js**: This file is used for creating the tables in the database when the application starts. It imports the data models and create them to create a table instance that can then be persisted into the database. To create the tables in the database, it is used the **sync** method on the **sequelize** object. This object is taken from the file responsible for creating the connection with the database.
-- **logging**: This file ensures to log the error message into log .log files to keep track of server exceptions. For logging, we use the **winston** library. There are two types of logging files. **logfile.log** is used to store errors raised by express when treating request whereas "**uncaughtExceptions.log**is used for uncaught errors that occurred outside of request treatments.
+- **logging**: This file ensures to log the error message into .log files to keep track of server exceptions. For logging, we use the **winston** library. There are two types of logging files. **logfile.log** is used to store errors raised by express when treating request whereas "**uncaughtExceptions.log**is used for uncaught errors that occurred outside of request treatments.
 - **routes**: This file is responsible for redirecting requests to the different APIs.
 
 #### Authentication
