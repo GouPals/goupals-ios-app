@@ -20,6 +20,11 @@ And
 
 Before running the backend server, you should ensure you have the config package and the .env file in your local repository. Those files are used for configuration, especially for connecting the backend to the database. You can find them in the config repository. 
 
+Before running the backend server, install all dependences by executing in the terminal the following command:
+   ```
+      npm install
+   ```
+
 To run the backend server, you should be in the API folder and run the following command:
    ```
     npm start
