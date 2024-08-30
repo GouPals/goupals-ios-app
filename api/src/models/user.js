@@ -2,6 +2,7 @@ const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../utils/database");
 const jwt = require("jsonwebtoken");
 const config = require("config");
+const Joi = require("joi");
 
 class User extends Model {
   generateAuthToken() {
@@ -9,6 +10,29 @@ class User extends Model {
       { id: this.id, isAdmin: this.isAdmin },
       config.get("jwtPrivateKey")
     );
+  }
+
+  static validate(userData) {
+    const schema = Joi.object({
+      name: Joi.string().min(5).max(40).required(),
+      email: Joi.string().min(5).max(255).required().email(),
+      password: Joi.string()
+        .min(5)
+        .max(255)
+        .pattern(
+          new RegExp(
+            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$"
+          )
+        )
+        .messages({
+          "string.pattern.base":
+            "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+        })
+        .required(),
+      confirmPassword: Joi.string().required().valid(Joi.ref("password")),
+    });
+
+    return schema.validate(userData);
   }
 }
 

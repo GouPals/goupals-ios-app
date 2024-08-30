@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const Item = require("../models/itemModel");
+const Item = require("../models/item");
 
 router.get("/:id", async (req, res) => {
   const item = await Item.findByPk(req.params.id);

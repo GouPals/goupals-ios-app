@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const Flight = require("../models/flightModel");
+const Flight = require("../models/flight");
 
 router.get("/:id", async (req, res) => {
   const flight = await Flight.findByPk(req.params.id);

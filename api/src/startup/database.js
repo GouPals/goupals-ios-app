@@ -1,9 +1,9 @@
 const winston = require("winston");
 const sequelize = require("../utils/database.js");
 
-const User = require("../models/userModel.js");
-const Flight = require("../models/flightModel.js");
-const Item = require("../models/itemModel.js");
+const User = require("../models/user.js");
+const Flight = require("../models/flight.js");
+const Item = require("../models/item.js");
 
 module.exports = () => {
   new User();
