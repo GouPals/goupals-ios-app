@@ -7,3 +7,6 @@ config/
 
 # Ignore logs
 *.log
+
+# Ignore vs code created files
+.vscode/
