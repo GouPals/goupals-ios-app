@@ -20,7 +20,7 @@ struct ItemView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: .infinity)
-                .background(Color(.systemGray6))
+                .background(Color.white)
             
             // Details section
             VStack(alignment: .leading, spacing: 15) {
@@ -68,7 +68,7 @@ struct ItemView: View {
             .padding()
         }
         .navigationBarTitle("Product Details", displayMode: .inline)
-        .background(Color(.systemGray6))
+        .background(Color.white)
     }
 }
 

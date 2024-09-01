@@ -73,11 +73,11 @@ struct OngoingView: View {
 }
 
 
-struct OngoingView_Previews: PreviewProvider {
-    static var previews: some View {
-        OngoingView()
-    }
-}
+//struct OngoingView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        OngoingView()
+//    }
+//}
 
 
 

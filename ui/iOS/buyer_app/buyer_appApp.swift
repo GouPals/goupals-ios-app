@@ -1,17 +1,5 @@
-//
-//  buyer_appApp.swift
-//  buyer_app
-//
-//  Created by Jerry Cheng on 8/20/24.
-//
-
-
 import SwiftUI
-import Combine
 import FirebaseCore
-import Firebase
-import FirebaseAuth
-import FirebaseStorage
 
 class AppModeManager: ObservableObject {
     @Published var isTravelerApp: Bool = false
@@ -27,25 +15,22 @@ class LanguageSettings: ObservableObject {
     }
 }
 
-
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-  func application(_ application: UIApplication,
-                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    FirebaseApp.configure()
-    return true
-  }
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        FirebaseApp.configure()  // Only configure Firebase here
+        return true
+    }
 }
-
 
 @main
 struct buyer_appApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate  // Attach AppDelegate
     @StateObject var languageSettings = LanguageSettings() // Create the global language settings
     
     var body: some Scene {
         WindowGroup {
             ContentView()
-                
         }
     }
 }

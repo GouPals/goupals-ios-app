@@ -1,16 +1,16 @@
 import SwiftUI
 
 struct BrowseView: View {
-    // Sample data for designer brands
+    // Sample data for designer brands with image names, descriptions, and labels
     let items = [
-        ("Louis Vuitton", "louis_vuitton_image", "$20199"),
-        ("Gucci", "gucci_image", "$15999"),
-        ("Chanel", "chanel_image", "$18999"),
-        ("Prada", "prada_image", "$13999"),
-        ("Hermès", "hermes_image", "$24999"),
-        ("Dior", "dior_image", "$17999")
+        ("Louis Vuitton", "lv", "Luxury leather goods, fashion, and accessories.", ["Bags", "Clothing"]),
+        ("Gucci", "gucci", "Iconic Italian fashion with a modern twist.", ["Bags", "Clothing", "Shoes"]),
+        ("Chanel", "chanel", "Timeless elegance in fashion, perfumes, and more.", ["Jewelry", "Clothing"]),
+        ("Adidas", "adidas", "Sophisticated and innovative fashion.", ["Shoes", "Clothing"]),
+        ("Versace", "versace", "High-end fashion and leather craftsmanship.", ["Clothing", "Jewelry"]),
+        ("Nike", "nike", "Classic French luxury in fashion and beauty.", ["Shoes", "Clothing"])
     ]
-    
+
     @State private var searchText = ""
     @State private var selectedCategory = "Recommended"
     @State private var showFilterOptions = false
@@ -57,19 +57,20 @@ struct BrowseView: View {
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                         ForEach(filteredItems, id: \.0) { item in
                             NavigationLink(destination: StoreView(storeName: item.0)) {
-                                VStack(alignment: .leading) {
+                                VStack(alignment: .center) {
                                     Image(item.1)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(width: 100, height: 100)
+                                        .frame(width: 100, height: 100) // Centered image
                                     
                                     Text(item.0)
                                         .font(.headline)
                                         .bold()
                                     
-                                    Text("Price: \(item.2)")
+                                    Text(item.2)
                                         .font(.subheadline)
                                         .foregroundColor(.gray)
+                                        .lineLimit(2) // Brand-specific descriptions
                                 }
                                 .padding()
                                 .background(Color.white)
@@ -109,12 +110,16 @@ struct BrowseView: View {
         }
     }
     
-    // Filtering the items based on search text
-    var filteredItems: [(String, String, String)] {
+    // Filtering the items based on search text and selected category
+    var filteredItems: [(String, String, String, [String])] {
+        let categoryFilteredItems = items.filter { item in
+            selectedCategory == "Recommended" || item.3.contains(selectedCategory)
+        }
+        
         if searchText.isEmpty {
-            return items
+            return categoryFilteredItems
         } else {
-            return items.filter { $0.0.lowercased().contains(searchText.lowercased()) }
+            return categoryFilteredItems.filter { $0.0.lowercased().contains(searchText.lowercased()) }
         }
     }
     
@@ -136,12 +141,5 @@ struct BrowseView: View {
         default:
             return "star"
         }
-    }
-}
-
-
-struct BrowseView_Previews: PreviewProvider {
-    static var previews: some View {
-        BrowseView()
     }
 }

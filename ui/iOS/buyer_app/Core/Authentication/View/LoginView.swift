@@ -1,36 +1,12 @@
-////
-////  LoginView.swift
-////  buyer_app
-////
-////  Created by Jerry Cheng on 8/25/24.
-////
-//
 import SwiftUI
-import Firebase
 import FirebaseAuth
-import FirebaseStorage
-import FirebaseCore
-
-//class FirebaseManager: NSObject {
-//    let auth: Auth
-//    
-//    static let shared = FirebaseManager()
-//    
-//    override init(){
-//        FirebaseApp.configure()
-//        
-//        self.auth = Auth.auth()
-//        
-//        super.init()
-//    }
-//}
-
 
 struct LoginView: View {
     @Binding var isLoggedIn: Bool
     @State var email = ""
     @State var password = ""
     @State private var showSignUp = false
+    @State var loginStatusMessage = ""
     
     var body: some View {
         VStack {
@@ -38,7 +14,7 @@ struct LoginView: View {
                 .font(.largeTitle)
                 .padding(.bottom, 40)
 
-            TextField("Username", text: $email)
+            TextField("Email", text: $email)
                 .padding()
                 .background(Color(.systemGray6))
                 .cornerRadius(5)
@@ -53,24 +29,18 @@ struct LoginView: View {
                 .padding(.horizontal, 40)
 
             Button(action: {
-                // Handle login logic here
                 loginAccount()
-                
-                // change the log in global variable to true
-                
-                
             }) {
                 Text("Login")
                     .font(.headline)
                     .foregroundColor(.white)
                     .padding()
                     .frame(width: 200)
-                    .background(Color.orange) // Changed color to orange
+                    .background(Color.orange)
                     .cornerRadius(10)
                     .padding(.top, 20)
             }
             
-            // Sign-Up Button
             Button(action: {
                 showSignUp = true
             }) {
@@ -83,28 +53,38 @@ struct LoginView: View {
                 SignUpView()
             }
             
-            Text(self.loginStatusMessage)
-                .foregroundColor(.red)
+            if !loginStatusMessage.isEmpty {
+                Text(loginStatusMessage)
+                    .foregroundColor(.red)
+                    .font(.subheadline)
+                    .padding(.top, 10)
+                    .multilineTextAlignment(.center)
+                    .transition(.slide)
+            }
         }
+        .offset(x: loginStatusMessage.isEmpty ? 0 : 10)
     }
     
-    @State var loginStatusMessage = ""
-    
-    private func loginAccount(){
-        print("You have successfully logged in! ")
-        Auth.auth().signIn(withEmail: email, password: password){
-            result, err in
-            if let err = err {
-                print("Failed to create a user ", err)
-                self.loginStatusMessage = "Failed to log in to the account \(err)"
-                return
+    private func loginAccount() {
+        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+            if let error = error as NSError? {
+                switch AuthErrorCode(rawValue: error.code) {
+                case .invalidEmail:
+                    self.loginStatusMessage = "Invalid email format. Please check your email."
+                case .wrongPassword:
+                    self.loginStatusMessage = "Incorrect password. Please try again."
+                case .userNotFound:
+                    self.loginStatusMessage = "No account found for this email. Please sign up."
+                case .networkError:
+                    self.loginStatusMessage = "Network error. Please check your connection."
+                default:
+                    self.loginStatusMessage = "Login failed. Please try again."
+                }
+            } else {
+                print("Successfully logged in! User ID: \(result?.user.uid ?? "")")
+                self.loginStatusMessage = "Login successful!"
+                isLoggedIn = true
             }
-            
-            print("Successfully created the user! \(result?.user.uid ?? "")")
-            self.loginStatusMessage = "Successfully logged in to user! \(result?.user.uid ?? "")"
-            isLoggedIn = true
         }
-        
-        
     }
 }

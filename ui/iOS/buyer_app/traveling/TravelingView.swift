@@ -18,6 +18,7 @@ struct TravelingView: View {
                     Image(systemName: "list.bullet")
                     Text("Orders")
                 }
+            
             TripsView()
                 .tabItem {
                     Image(systemName: "airplane")
@@ -46,8 +47,8 @@ struct TravelingView: View {
     }
 }
 
-struct TravelingView_Previews: PreviewProvider {
-    static var previews: some View {
-        TravelingView(appModeManager: AppModeManager())
-    }
-}
+//struct TravelingView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        TravelingView(appModeManager: AppModeManager())
+//    }
+//}

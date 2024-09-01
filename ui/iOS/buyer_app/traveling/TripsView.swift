@@ -226,7 +226,8 @@ struct TripDetailView: View {
             TextField("Departure Time", text: $trip.departureTime)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
-            
+
+
             TextField("Arrival City", text: $trip.arrivalCity)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
@@ -253,8 +254,8 @@ struct TripDetailView: View {
 
 
 
-struct TripsView_Previews: PreviewProvider {
-    static var previews: some View {
-        TripsView()
-    }
-}
+//struct TripsView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        TripsView()
+//    }
+//}

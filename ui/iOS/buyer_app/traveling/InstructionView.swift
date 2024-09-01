@@ -236,19 +236,22 @@ struct FullMapView: View {
             Map(coordinateRegion: $region)
                 .edgesIgnoringSafeArea(.all)
             
-            Button(action: {
-                presentationMode.wrappedValue.dismiss() // Back action
-            }) {
-                HStack {
-                    Image(systemName: "arrow.left")
+            HStack{
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss() // Back action
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.left")
+                    }
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.black.opacity(0.6))
+                    .clipShape(Circle())
+                    .padding()
                 }
-                .foregroundColor(.white)
-                .padding()
-                .background(Color.black.opacity(0.6))
-                .clipShape(Circle())
-                .padding()
+                // push the button to the left
+                Spacer()
             }
-            Spacer()
         }
     }
 }

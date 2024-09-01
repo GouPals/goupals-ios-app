@@ -20,6 +20,12 @@ struct ShoppingView: View {
 //                .environmentObject(languageSettings) // Pass it to the environment
                 }
             
+            WishlistView() // New Wishlist Tab
+                            .tabItem {
+                                Image(systemName: "heart.fill")
+                                Text("Wishlist")
+                            }
+            
             OrdersView()
                 .tabItem {
                     Image(systemName: "cart.fill")
@@ -43,9 +49,9 @@ struct ShoppingView: View {
     }
 }
 
-struct ShoppingView_Previews: PreviewProvider {
-    static var previews: some View {
-        ShoppingView(appModeManager: AppModeManager())
-    }
-}
+//struct ShoppingView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ShoppingView(appModeManager: AppModeManager())
+//    }
+//}
 

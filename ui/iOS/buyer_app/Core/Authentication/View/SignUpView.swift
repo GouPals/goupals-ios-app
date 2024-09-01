@@ -1,11 +1,16 @@
+
 import SwiftUI
-import Firebase
 import FirebaseAuth
+import Firebase
+import FirebaseStorage
+import GoogleSignIn
+
 
 struct SignUpView: View {
-    
     @State var email = ""
     @State var password = ""
+    @State var signupStatusMessage = ""
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack {
@@ -15,14 +20,13 @@ struct SignUpView: View {
                 .font(.largeTitle)
                 .padding(.bottom, 40)
             
-            TextField("Username", text: $email)
+            TextField("Email", text: $email)
                 .padding()
                 .background(Color(.systemGray6))
                 .cornerRadius(5)
                 .padding(.horizontal, 40)
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
-            
 
             SecureField("Password", text: $password)
                 .padding()
@@ -31,93 +35,96 @@ struct SignUpView: View {
                 .padding(.horizontal, 40)
             
             Button(action: {
-                // Add the new user to the firebase database:
                 createAccount()
-                
             }) {
                 Text("Create Account")
                     .font(.headline)
                     .foregroundColor(.white)
                     .padding()
                     .frame(width: 200)
-                    .background(Color.blue) // Changed color to orange
+                    .background(Color.blue)
                     .cornerRadius(10)
                     .padding(.top, 20)
             }
             
-            Text(self.signupStatusMessage)
-                .foregroundColor(.red)
+            if !signupStatusMessage.isEmpty {
+                Text(signupStatusMessage)
+                    .foregroundColor(signupStatusMessage == "Account created successfully!" ? .green : .red)
+                    .font(.subheadline)
+                    .padding(.top, 10)
+                    .multilineTextAlignment(.center)
+                    .transition(.opacity)
+                    .animation(.easeInOut)
+            }
             
             Spacer()
             
-            Button(action: {
-                // Handle Google Sign-Up
-            }) {
-                HStack {
-                    Image(systemName: "globe") // Replace with Google logo if available
-                    Text("Sign up with Google")
-                        .font(.headline)
-                }
-                .foregroundColor(.white)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.orange)
-                .cornerRadius(10)
-                .padding(.horizontal, 40)
-            }
-            .padding(.bottom, 20)
-            
-            Button(action: {
-                // Handle Facebook Sign-Up
-            }) {
-                HStack {
-                    Image(systemName: "f.circle") // Replace with Facebook logo if available
-                    Text("Sign up with Facebook")
-                        .font(.headline)
-                }
-                .foregroundColor(.white)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.blue)
-                .cornerRadius(10)
-                .padding(.horizontal, 40)
-            }
-            .padding(.bottom, 20)
-            
-            Button(action: {
-                // Handle Apple Sign-Up
-            }) {
-                HStack {
-                    Image(systemName: "applelogo") // Replace with Apple logo if available
-                    Text("Sign up with Apple")
-                        .font(.headline)
-                }
-                .foregroundColor(.white)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.black)
-                .cornerRadius(10)
-                .padding(.horizontal, 40)
-            }
+            socialSignUpButtons
         }
         .padding()
     }
     
-    @State var signupStatusMessage = ""
-    
-    private func createAccount(){
-//        print("New account is created here! ")
-        Auth.auth().createUser(withEmail: email, password: password){
-            result, err in
-            if let err = err {
-                print("Failed to create a user ", err)
-                self.signupStatusMessage = "Failed to creat a new account \(err)"
-                return
+    private var socialSignUpButtons: some View {
+        VStack(spacing: 10) {
+            Button(action: {
+                // Handle Google Sign-Up
+            }) {
+                socialButtonContent(iconName: "globe", text: "Sign up with Google", color: .orange)
             }
             
-            print("Successfully created the user! \(result?.user.uid ?? "")")
-            self.signupStatusMessage = "Successfully created the user! \(result?.user.uid ?? "")"
+            Button(action: {
+                // Handle Facebook Sign-Up
+            }) {
+                socialButtonContent(iconName: "f.circle", text: "Sign up with Facebook", color: .blue)
+            }
+            
+            Button(action: {
+                // Handle Apple Sign-Up
+            }) {
+                socialButtonContent(iconName: "applelogo", text: "Sign up with Apple", color: .black)
+            }
         }
-        
     }
+    
+    private func socialButtonContent(iconName: String, text: String, color: Color) -> some View {
+        HStack {
+            Image(systemName: iconName)
+            Text(text)
+                .font(.headline)
+        }
+        .foregroundColor(.white)
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background(color)
+        .cornerRadius(10)
+        .padding(.horizontal, 40)
+    }
+    
+    private func createAccount() {
+        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+            if let error = error as NSError? {
+                switch AuthErrorCode(rawValue: error.code) {
+                case .invalidEmail:
+                    self.signupStatusMessage = "Invalid email format. Please check your email."
+                case .weakPassword:
+                    self.signupStatusMessage = "Password is too weak. Please use a stronger password."
+                case .emailAlreadyInUse:
+                    self.signupStatusMessage = "This email is already in use. Please use a different email."
+                case .networkError:
+                    self.signupStatusMessage = "Network error. Please check your connection."
+                default:
+                    self.signupStatusMessage = "Sign up failed. Please try again."
+                }
+            } else {
+                self.signupStatusMessage = "Account created successfully!"
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    self.presentationMode.wrappedValue.dismiss()  // Automatically go back to LoginView
+                }
+            }
+        }
+    }
+    
+    
+    
+
 }
