@@ -32,7 +32,7 @@ struct ShoppingView: View {
                     Text("Orders")
                 }
             
-            MessagesView()
+            MessageView()
                 .tabItem {
                     Image(systemName: "message.fill")
                     Text("Messages")

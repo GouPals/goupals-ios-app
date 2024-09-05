@@ -13,6 +13,14 @@ struct LoginView: View {
             Text("Welcome to GouPals")
                 .font(.largeTitle)
                 .padding(.bottom, 40)
+            
+            Button{
+                
+            }label: {
+                Image(systemName: "person.fill")
+                    .font(.system(size: 64))
+                    .padding()
+            }
 
             TextField("Email", text: $email)
                 .padding()

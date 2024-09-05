@@ -1,4 +1,3 @@
-
 import SwiftUI
 import FirebaseAuth
 import Firebase
@@ -10,58 +9,97 @@ struct SignUpView: View {
     @State var email = ""
     @State var password = ""
     @State var signupStatusMessage = ""
+    @State var shouldShowImagePicker = false
+    @State var image: UIImage?
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
-        VStack {
-            Spacer()
-            
-            Text("Sign Up to Change the World's Logistics")
-                .font(.largeTitle)
-                .padding(.bottom, 40)
-            
-            TextField("Email", text: $email)
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(5)
-                .padding(.horizontal, 40)
-                .keyboardType(.emailAddress)
-                .autocapitalization(.none)
-
-            SecureField("Password", text: $password)
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(5)
-                .padding(.horizontal, 40)
-            
-            Button(action: {
-                createAccount()
-            }) {
-                Text("Create Account")
-                    .font(.headline)
-                    .foregroundColor(.white)
+        NavigationView{
+            VStack {
+                Spacer()
+                
+                Text("Sign Up to Change the World's Logistics")
+                    .font(.largeTitle)
+                    .padding(.bottom, 40)
+                
+                Button{
+                    shouldShowImagePicker.toggle()
+                } label: {
+                    
+                    VStack{
+                        if let image = self.image {
+                            // if the image is selected using the picker:
+                            Image(uiImage: image)
+                                .resizable()
+                                .frame(width: 128, height: 128)
+                                .scaledToFit()
+                                .cornerRadius(64)
+                                
+                        }
+                        else{
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 64))
+                                .foregroundColor(.black)
+                                .padding()
+                                
+                        }
+                    }
+                    .overlay(RoundedRectangle(cornerRadius: 64)
+                        .stroke(Color.black, lineWidth: 3))
                     .padding()
-                    .frame(width: 200)
-                    .background(Color.blue)
-                    .cornerRadius(10)
-                    .padding(.top, 20)
+                    
+                }
+                
+                TextField("Email", text: $email)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(5)
+                    .padding(.horizontal, 40)
+                    .keyboardType(.emailAddress)
+                    .autocapitalization(.none)
+
+                SecureField("Password", text: $password)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(5)
+                    .padding(.horizontal, 40)
+                
+                Button(action: {
+                    createAccount()
+                }) {
+                    Text("Create Account")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(width: 200)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                        .padding(.top, 20)
+                }
+                
+                if !signupStatusMessage.isEmpty {
+                    Text(signupStatusMessage)
+                        .foregroundColor(signupStatusMessage == "Account created successfully!" ? .green : .red)
+                        .font(.subheadline)
+                        .padding(.top, 10)
+                        .multilineTextAlignment(.center)
+                        .transition(.opacity)
+                        .animation(.easeInOut)
+                }
+                
+                Spacer()
+                
+                socialSignUpButtons
             }
+            .padding()
             
-            if !signupStatusMessage.isEmpty {
-                Text(signupStatusMessage)
-                    .foregroundColor(signupStatusMessage == "Account created successfully!" ? .green : .red)
-                    .font(.subheadline)
-                    .padding(.top, 10)
-                    .multilineTextAlignment(.center)
-                    .transition(.opacity)
-                    .animation(.easeInOut)
-            }
-            
-            Spacer()
-            
-            socialSignUpButtons
+        
         }
-        .padding()
+        .navigationViewStyle(StackNavigationViewStyle())
+        .fullScreenCover(isPresented: $shouldShowImagePicker, onDismiss: nil){
+//            Text("This view picks an image")
+            ImagePicker(selectedImage: $image, sourceType: .photoLibrary)
+        }
     }
     
     private var socialSignUpButtons: some View {
@@ -117,14 +155,68 @@ struct SignUpView: View {
                 }
             } else {
                 self.signupStatusMessage = "Account created successfully!"
+                // If the account is created succcessfully, add the profile image to the database here:
+                self.persistImageToStorage()
+                
+                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                     self.presentationMode.wrappedValue.dismiss()  // Automatically go back to LoginView
                 }
             }
         }
+        
     }
     
+    private func persistImageToStorage(){
+        let filename = UUID().uuidString
+        
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid
+        else { return }
+        let ref = FirebaseManager.shared.storage.reference(withPath: uid)
+        
+        guard let imageData = self.image?.jpegData(compressionQuality: 0.5)
+        else{ return }
+        
+        ref.putData(imageData, metadata: nil){
+            metadata, err in
+            if let err = err {
+                self.signupStatusMessage = "Failed to push the image to storage \(err)"
+                return
+            }
+            ref.downloadURL{ url, err in
+                if let err = err {
+                    self.signupStatusMessage = "Failed to retrive the downloaded URL: \(err)"
+                    return
+                }
+                self.signupStatusMessage = "Successfully stored the image with the url: \(url?.absoluteString ?? "")"
+                
+                // Next store the user data into the user's profile:
+                guard let url = url else{ return
+                }
+                self.storeUserInformation(imageProfileUrl: url)
+                
+            }
+        }
+    }
     
-    
-
+    private func storeUserInformation(imageProfileUrl: URL){
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else{
+            return
+        }
+        let userData = ["email": self.email, 
+                        "uid": uid,
+                        "profileImage": imageProfileUrl.absoluteString]
+        // Store the user infomation into users
+        FirebaseManager.shared.firestore.collection("users")
+            .document(uid).setData(userData){ err in
+                if let err = err {
+                    print(err)
+                    self.signupStatusMessage = "\(err)"
+                    return
+                }
+                
+                print("Success! ")
+                
+            }
+    }
 }
