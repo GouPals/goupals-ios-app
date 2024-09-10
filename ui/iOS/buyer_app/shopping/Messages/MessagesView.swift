@@ -17,6 +17,15 @@ struct MessagesView: View {
     @State private var showDropdown = false
     @State private var dropdownOffset: CGSize = .zero
     @State private var searchText = ""
+    
+    // Declaration of the current user: 
+//    @ObservedObject var vm: ChatLogViewModel
+//    let currentUser: CurrentUser?
+    
+//    init(currentUser: CurrentUser?) {
+//        self.currentUser = currentUser
+//        self.vm = ChatLogViewModel(currentUser: currentUser!)
+//    }
 
     var body: some View {
         NavigationView {
@@ -77,7 +86,7 @@ struct MessagesView: View {
                                                     }
                                                 }
                                         }
-                                        
+                                    
                                         if !isEditing {
                                             NavigationLink(destination: MessageDetailView()) {
                                                 HStack {
@@ -308,98 +317,3 @@ struct Message: Identifiable {
     var isShown: Bool
 }
 
-struct MessageDetailView: View {
-    @State private var messages: [String] = ["Hi, how can I help you?"]
-    @State private var userMessage: String = ""
-
-    var body: some View {
-        VStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 10) {
-                    ForEach(messages, id: \.self) { message in
-                        HStack {
-                            if message == messages.first {
-                                Text(message)
-                                    .padding()
-                                    .background(Color(.systemGray5))
-                                    .cornerRadius(10)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            } else {
-                                Text(message)
-                                    .padding()
-                                    .background(Color.blue)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(10)
-                                    .frame(maxWidth: .infinity, alignment: .trailing)
-                            }
-                        }
-                    }
-                }
-                .padding()
-            }
-            .background(Color(.systemGray6))
-
-            HStack {
-                TextField("Type a message...", text: $userMessage)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
-
-                Button(action: sendMessage) {
-                    Image(systemName: "paperplane.fill")
-                        .font(.system(size: 24))
-                        .padding(.horizontal)
-                }
-            }
-            .padding()
-        }
-        .navigationTitle("Chat")
-    }
-
-    func sendMessage() {
-        if !userMessage.isEmpty {
-            // Add user's message to the conversation
-            messages.append(userMessage)
-            userMessage = ""
-
-            // Simulate a reply from the system
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                messages.append("Hi, how can I help you?")
-            }
-        }
-    }
-}
-
-struct SearchBar: View {
-    @Binding var text: String
-
-    var body: some View {
-        HStack {
-            TextField("Search...", text: $text)
-                .padding(7)
-                .padding(.horizontal, 25)
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
-                .overlay(
-                    HStack {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(.gray)
-                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                            .padding(.leading, 8)
-
-                        if !text.isEmpty {
-                            Button(action: {
-                                text = ""
-                            }) {
-                                Image(systemName: "multiply.circle.fill")
-                                    .foregroundColor(.gray)
-                                    .padding(.trailing, 8)
-                            }
-                        }
-                    }
-                )
-                .padding(.horizontal, 10)
-        }
-        .padding(.top, 10)
-    }
-}

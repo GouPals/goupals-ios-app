@@ -8,8 +8,12 @@
 import SwiftUI
 
 struct MessageView: View {
+    
+    @ObservedObject var vm = MainMessageViewModel()
+    
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text("Current User ID is: \(vm.errorMessage)")
     }
 }
 

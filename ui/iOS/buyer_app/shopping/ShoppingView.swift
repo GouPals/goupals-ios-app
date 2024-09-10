@@ -8,6 +8,7 @@ import SwiftUI
 
 struct ShoppingView: View {
     @ObservedObject var appModeManager: AppModeManager
+    @State private var isLoggedIn = false
 //    @StateObject var languageSettings = LanguageSettings() // Create the global language settings
     
     var body: some View {
@@ -32,7 +33,7 @@ struct ShoppingView: View {
                     Text("Orders")
                 }
             
-            MessageView()
+            MessagesView()
                 .tabItem {
                     Image(systemName: "message.fill")
                     Text("Messages")
@@ -44,6 +45,21 @@ struct ShoppingView: View {
                     Image(systemName: "person.fill")
                     Text("Profile")
                 }
+//            if isLoggedIn{
+//                ProfileView(appModeManager: appModeManager)
+//                    .tabItem {
+//                        Image(systemName: "person.fill")
+//                        Text("Profile")
+//                    }
+//            }
+//            else {
+//                LoginView(isLoggedIn: $isLoggedIn)
+//                    .tabItem {
+//                        Image(systemName: "person.fill")
+//                        Text("Profile")
+//                    }
+//            }
+        
         }
         .accentColor(.orange) // Set orange as the dominant color for the tab bar
     }

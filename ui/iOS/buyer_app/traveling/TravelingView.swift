@@ -31,7 +31,7 @@ struct TravelingView: View {
                     Text("Ongoing")
                 }
             
-            MessagesView()
+            MessageView()
                 .tabItem {
                     Image(systemName: "message.fill")
                     Text("Messages")

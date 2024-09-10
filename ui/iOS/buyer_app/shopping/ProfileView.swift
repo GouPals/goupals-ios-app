@@ -1,4 +1,6 @@
 import SwiftUI
+import SDWebImageSwiftUI
+import FirebaseAuth
 
 struct ProfileView: View {
     @State private var name = "John Doe"
@@ -6,8 +8,15 @@ struct ProfileView: View {
     @State private var reviews = "25 Reviews"
     @State private var bio = "Passionate about driving and connecting with people."
     
+    @State var showLogoutOption = false // Variable to toggle logout sheet
+    
+    
     @ObservedObject var appModeManager: AppModeManager
-
+    @ObservedObject var vm = MainMessageViewModel()
+//    @State var isLoggedIn = false
+    
+    @Environment(\.presentationMode) var presentationMode
+    
     var body: some View {
         ZStack {
             ScrollView {
@@ -15,13 +24,33 @@ struct ProfileView: View {
                     // Top Profile Section
                     VStack {
                         HStack {
-                            Image(systemName: "person.crop.circle.fill")
-                                .resizable()
+                            // Profile Image with AsyncImage
+                            if let urlString = vm.currentUser?.profileImage, let url = URL(string: urlString) {
+                                AsyncImage(url: url) { image in
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                } placeholder: {
+                                    Image(systemName: "person.crop.circle.fill")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .foregroundColor(.gray)
+                                }
                                 .frame(width: 80, height: 80)
+                                .clipShape(Circle())
                                 .padding(.leading)
+                            } else {
+                                // Fallback if URL is unavailable
+                                Image(systemName: "person.crop.circle.fill")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 80, height: 80)
+                                    .foregroundColor(.gray)
+                                    .padding(.leading)
+                            }
                             
                             VStack(alignment: .leading) {
-                                Text(name)
+                                Text(vm.currentUser?.email ?? "")
                                     .font(.headline)
                                 Text("Rating: \(rating)")
                                     .font(.subheadline)
@@ -31,12 +60,29 @@ struct ProfileView: View {
                             }
                             Spacer()
                             Button(action: {
-                                // Open settings
+                                showLogoutOption.toggle() // Toggle sheet
                             }) {
                                 Image(systemName: "gearshape.fill")
                                     .font(.title2)
                             }
                             .padding(.trailing)
+                            .actionSheet(isPresented: $showLogoutOption) {
+                                ActionSheet(
+                                    title: Text("Settings"),
+                                    message: Text("Do you want to sign out?"),
+                                    buttons: [
+                                        .destructive(Text("Sign Out"), action: {
+                                            logOut()
+                                            vm.handleSignout()
+                                        }),
+                                        .cancel()
+                                    ]
+                                )
+                            }
+                            .fullScreenCover(isPresented: $vm.isLoggedIn, onDismiss: nil) {
+//                                Text("This is the cover ...")
+                                LoginView(isLoggedIn: $vm.isLoggedIn)
+                            }
                         }
                         .padding()
                     }
@@ -125,6 +171,18 @@ struct ProfileView: View {
             }
         }
     }
+
+    // Log Out function
+    private func logOut() {
+        do {
+            try Auth.auth().signOut()
+            // Go back to LoginView after sign out
+            presentationMode.wrappedValue.dismiss()
+//            self.isUserLoggedIn.toggle()
+        } catch {
+            print("Failed to log out: \(error.localizedDescription)")
+        }
+    }
 }
 
 // Reusable button components for profile options
@@ -155,11 +213,13 @@ struct ProfileOptionButton: View {
     }
 }
 
-struct ProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        ProfileView(appModeManager: AppModeManager())
-    }
-}
+
+
+//struct ProfileView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ProfileView(appModeManager: AppModeManager())
+//    }
+//}
 
 
 //import SwiftUI

@@ -27,10 +27,20 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct buyer_appApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate  // Attach AppDelegate
     @StateObject var languageSettings = LanguageSettings() // Create the global language settings
+    @State private var isLoggedIn = false
+//    @ObservedObject var appModeManager = AppModeManager()
+//    @ObservedObject var vm: ChatLogViewModel
+//    @State var currentUser: CurrentUser
     
     var body: some Scene {
         WindowGroup {
             ContentView()
+//            if appModeManager.isTravelerApp {
+//                TravelingView(appModeManager: appModeManager)
+//            } else {
+//                ShoppingView(appModeManager: appModeManager)
+//            }
+            
         }
     }
 }

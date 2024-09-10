@@ -3,7 +3,7 @@ import FirebaseAuth
 import Firebase
 import FirebaseStorage
 import GoogleSignIn
-
+import UserNotifications
 
 struct SignUpView: View {
     @State var email = ""
@@ -19,7 +19,7 @@ struct SignUpView: View {
                 Spacer()
                 
                 Text("Sign Up to Change the World's Logistics")
-                    .font(.largeTitle)
+                    .font(.title)
                     .padding(.bottom, 40)
                 
                 Button{
@@ -93,11 +93,9 @@ struct SignUpView: View {
             }
             .padding()
             
-        
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .fullScreenCover(isPresented: $shouldShowImagePicker, onDismiss: nil){
-//            Text("This view picks an image")
             ImagePicker(selectedImage: $image, sourceType: .photoLibrary)
         }
     }
@@ -155,16 +153,16 @@ struct SignUpView: View {
                 }
             } else {
                 self.signupStatusMessage = "Account created successfully!"
-                // If the account is created succcessfully, add the profile image to the database here:
                 self.persistImageToStorage()
-                
+
+                // Send a welcome notification after account creation
+                sendWelcomeNotification()
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    self.presentationMode.wrappedValue.dismiss()  // Automatically go back to LoginView
+                    self.presentationMode.wrappedValue.dismiss()
                 }
             }
         }
-        
     }
     
     private func persistImageToStorage(){
@@ -190,7 +188,6 @@ struct SignUpView: View {
                 }
                 self.signupStatusMessage = "Successfully stored the image with the url: \(url?.absoluteString ?? "")"
                 
-                // Next store the user data into the user's profile:
                 guard let url = url else{ return
                 }
                 self.storeUserInformation(imageProfileUrl: url)
@@ -203,20 +200,18 @@ struct SignUpView: View {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else{
             return
         }
-        let userData = ["email": self.email, 
+        let userData = ["email": self.email,
                         "uid": uid,
                         "profileImage": imageProfileUrl.absoluteString]
-        // Store the user infomation into users
         FirebaseManager.shared.firestore.collection("users")
             .document(uid).setData(userData){ err in
                 if let err = err {
-                    print(err)
                     self.signupStatusMessage = "\(err)"
                     return
                 }
                 
                 print("Success! ")
-                
             }
     }
+    
 }
