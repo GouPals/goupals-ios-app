@@ -47,7 +47,7 @@ class MainMessageViewModel: ObservableObject{
                 }
 //                print(data)
                 self.errorMessage = "Data: \(data.description)"
-                let uid = data["uid"] as? String ?? ""
+                let uid = data["uid"] as? String ?? "" 
                 let email = data["email"] as? String ?? ""
                 let profileImage = data["profileImage"] as? String ?? ""
                 self.currentUser = CurrentUser(uid: uid, email: email, profileImage: profileImage)

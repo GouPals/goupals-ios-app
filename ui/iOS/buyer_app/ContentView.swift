@@ -7,7 +7,7 @@ import FirebaseMessaging
 
 
 struct ContentView: View {
-    @State var isLoggedIn = true
+    @State var isLoggedIn = false
     @ObservedObject var appModeManager = AppModeManager()
 //    @ObservedObject var vm = MainMessageViewModel()
 
